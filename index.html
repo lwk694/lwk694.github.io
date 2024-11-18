@@ -148,7 +148,7 @@
                 redirect: "follow"
             };
 
-            fetch("http://deepexi-docai.deepexi.com/api/contracts/v3/parser/external/result", requestOptions)
+            fetch("https://deepexi-docai.deepexi.com/api/contracts/v3/parser/external/result", requestOptions)
                 .then((response) => response.json())
                 .then((result) => {
                     if (result.code === 200) {
