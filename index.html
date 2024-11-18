@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,31 +9,40 @@
         body {
             font-family: Arial, sans-serif;
         }
+
         header {
             display: flex;
             align-items: center;
         }
+
         header h1 {
             margin-left: 20px;
         }
+
         #logo {
             max-width: 100px;
             height: auto;
         }
-        video, img {
+
+        video,
+        img {
             max-width: 100%;
         }
+
         #photo {
             display: none;
             margin-top: 10px;
         }
-        #resultText, #responseText {
+
+        #resultText,
+        #responseText {
             width: 100%;
             height: 200px;
             margin-top: 20px;
         }
     </style>
 </head>
+
 <body>
     <header>
         <img id="logo" src="HA-logo.png" alt="Logo">
@@ -62,10 +72,10 @@
 
         // Get access to the camera
         navigator.mediaDevices.getUserMedia({
-        audio: false,
-        video: {
-            facingMode: 'environment'
-        }
+            audio: false,
+            video: {
+                facingMode: 'environment'
+            }
         })
             .then(stream => {
                 video.srcObject = stream;
@@ -121,18 +131,18 @@
                     'Accept': 'application/json'
                 }
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.code === 200) {
-                    const taskIds = data.data.task_ids;
-                    fetchResult(taskIds);
-                } else {
-                    console.error('Error:', data.msg);
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 200) {
+                        const taskIds = data.data.task_ids;
+                        fetchResult(taskIds);
+                    } else {
+                        console.error('Error:', data.msg);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
         });
 
         // Adding retry mechanism to fetch result
@@ -149,59 +159,78 @@
                 redirect: "follow"
             };
 
-            fetch("https://deepexi-docai.deepexi.com/api/contracts/v3/parser/external/result", requestOptions)
-                .then((response) => response.json())
-                .then((result) => {
-                    if (result.code === 200) {
-                        const content = result.data.parse_result.pages[0].content;
-                        if (content.length > 0) {
-                            resultText.value = content.map(item => item.text).join('\n');
-                        } else if (retry) {
-                            setTimeout(() => fetchResult(taskIds, false), 1000); // Retry after 1 seconds
+            function fetchResult(taskIds, retry = true, retries = 0) {
+                if (retries >= 30) {
+                    console.error('Failed to fetch result after 30 attempts.');
+                    return;
+                }
+
+                const myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+
+                const raw = JSON.stringify({ "task_id": taskIds[0] });
+
+                const requestOptions = {
+                    method: "POST",
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: "follow"
+                };
+
+                fetch("https://deepexi-docai.deepexi.com/api/contracts/v3/parser/external/result", requestOptions)
+                    .then((response) => response.json())
+                    .then((result) => {
+                        if (result.code === 200) {
+                            const content = result.data.parse_result.pages[0].content;
+                            if (content.length > 0) {
+                                resultText.value = content.map(item => item.text).join('\n');
+                            } else if (retry) {
+                                setTimeout(() => fetchResult(taskIds, false, retries + 1), 1000); // Retry after 1 seconds, increment retries counter
+                            }
                         }
-                    }
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                    if (retry) {
-                        setTimeout(() => fetchResult(taskIds, false), 1000); // Retry after 1 seconds
-                    }
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                        if (retry) {
+                            setTimeout(() => fetchResult(taskIds, false, retries + 1), 1000); // Retry after 1 seconds, increment retries counter
+                        }
+                    });
+            }
+
+            // Send the result text content when the send button is clicked
+            sendButton.addEventListener('click', () => {
+                const myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+                myHeaders.append("Authorization", "sk-OzEgxi3q30F5v4b8Ac1f09Db3eDf4290B0202b24B54bA821"); // Add the actual authorization token here
+
+                const resultContent = resultText.value;
+
+                const raw = JSON.stringify({
+                    "model": "deepexi2.5-72b-instruct",
+                    "messages": [
+                        {
+                            "role": "user",
+                            "content": `${resultContent}` + '\nTranslate to english, provide the english term only without other words.'
+                        }
+                    ],
+                    "temperature": 0.7
                 });
-        }
 
-        // Send the result text content when the send button is clicked
-        sendButton.addEventListener('click', () => {
-            const myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/json");
-            myHeaders.append("Authorization", "sk-OzEgxi3q30F5v4b8Ac1f09Db3eDf4290B0202b24B54bA821"); // Add the actual authorization token here
+                const requestOptions = {
+                    method: "POST",
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: "follow"
+                };
 
-            const resultContent = resultText.value;
-
-            const raw = JSON.stringify({
-                "model": "deepexi2.5-72b-instruct",
-                "messages": [
-                    {
-                        "role": "user",
-                        "content": `${resultContent}` + '\nTranslate to english, provide the english term only without other words.'
-                    }
-                ],
-                "temperature": 0.7
+                fetch("https://fastagi.deepexi.com/v1/chat/completions", requestOptions)
+                    .then((response) => response.json())
+                    .then((result) => {
+                        responseText.value = result.choices[0].message.content;
+                    })
+                    .catch((error) => console.error(error));
             });
-
-            const requestOptions = {
-                method: "POST",
-                headers: myHeaders,
-                body: raw,
-                redirect: "follow"
-            };
-
-            fetch("https://fastagi.deepexi.com/v1/chat/completions", requestOptions)
-              .then((response) => response.json())
-              .then((result) => {
-                  responseText.value = result.choices[0].message.content;
-              })
-              .catch((error) => console.error(error));
-        });
     </script>
 </body>
+
 </html>
