@@ -48,15 +48,14 @@
         <img id="logo" src="HA-logo.png" alt="Logo">
         <h1>Take a Photo and Upload</h1>
     </header>
-    <br>
-    <br>
-    <video id="video" autoplay></video><br>
-    <button id="capture">Capture Photo</button><br>
-    <canvas id="canvas" style="display: none;"></canvas><br>
-    <img id="photo" alt="Captured Photo"><br>
-    <button id="upload">Upload Photo</button><br>
-    <textarea id="resultText" readonly></textarea><br>
-    <button id="send">Send Content</button><br>
+
+    <video id="video" autoplay></video>
+    <button id="capture">Capture Photo</button>
+    <canvas id="canvas" style="display: none;"></canvas>
+    <img id="photo" alt="Captured Photo">
+    <button id="upload">Upload Photo</button>
+    <textarea id="resultText" readonly></textarea>
+    <button id="send">Send Content</button>
     <textarea id="responseText" readonly></textarea>
 
     <script>
@@ -146,7 +145,12 @@
         });
 
         // Adding retry mechanism to fetch result
-        function fetchResult(taskIds, retry = true) {
+        function fetchResult(taskIds, retry = true, retries = 0) {
+            if (retries >= 30) {
+                console.error('Failed to fetch result after 30 attempts.');
+                return;
+            }
+
             const myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
 
@@ -159,77 +163,60 @@
                 redirect: "follow"
             };
 
-            function fetchResult(taskIds, retry = true, retries = 0) {
-                if (retries >= 30) {
-                    console.error('Failed to fetch result after 30 attempts.');
-                    return;
-                }
-
-                const myHeaders = new Headers();
-                myHeaders.append("Content-Type", "application/json");
-
-                const raw = JSON.stringify({ "task_id": taskIds[0] });
-
-                const requestOptions = {
-                    method: "POST",
-                    headers: myHeaders,
-                    body: raw,
-                    redirect: "follow"
-                };
-
-                fetch("https://deepexi-docai.deepexi.com/api/contracts/v3/parser/external/result", requestOptions)
-                    .then((response) => response.json())
-                    .then((result) => {
-                        if (result.code === 200) {
-                            const content = result.data.parse_result.pages[0].content;
-                            if (content.length > 0) {
-                                resultText.value = content.map(item => item.text).join('\n');
-                            } else if (retry) {
-                                setTimeout(() => fetchResult(taskIds, false, retries + 1), 1000); // Retry after 1 seconds, increment retries counter
-                            }
-                        }
-                    })
-                    .catch((error) => {
-                        console.error('Error:', error);
-                        if (retry) {
+            fetch("https://deepexi-docai.deepexi.com/api/contracts/v3/parser/external/result", requestOptions)
+                .then((response) => response.json())
+                .then((result) => {
+                    if (result.code === 200) {
+                        const content = result.data.parse_result.pages[0].content;
+                        if (content.length > 0) {
+                            resultText.value = content.map(item => item.text).join('\n');
+                        } else if (retry) {
                             setTimeout(() => fetchResult(taskIds, false, retries + 1), 1000); // Retry after 1 seconds, increment retries counter
                         }
-                    });
-            }
-
-            // Send the result text content when the send button is clicked
-            sendButton.addEventListener('click', () => {
-                const myHeaders = new Headers();
-                myHeaders.append("Content-Type", "application/json");
-                myHeaders.append("Authorization", "sk-OzEgxi3q30F5v4b8Ac1f09Db3eDf4290B0202b24B54bA821"); // Add the actual authorization token here
-
-                const resultContent = resultText.value;
-
-                const raw = JSON.stringify({
-                    "model": "deepexi2.5-72b-instruct",
-                    "messages": [
-                        {
-                            "role": "user",
-                            "content": `${resultContent}` + '\nTranslate to english, provide the english term only without other words.'
-                        }
-                    ],
-                    "temperature": 0.7
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    if (retry) {
+                        setTimeout(() => fetchResult(taskIds, false, retries + 1), 1000); // Retry after 1 seconds, increment retries counter
+                    }
                 });
+        }
 
-                const requestOptions = {
-                    method: "POST",
-                    headers: myHeaders,
-                    body: raw,
-                    redirect: "follow"
-                };
 
-                fetch("https://fastagi.deepexi.com/v1/chat/completions", requestOptions)
-                    .then((response) => response.json())
-                    .then((result) => {
-                        responseText.value = result.choices[0].message.content;
-                    })
-                    .catch((error) => console.error(error));
+        // Send the result text content when the send button is clicked
+        sendButton.addEventListener('click', () => {
+            const myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            myHeaders.append("Authorization", "sk-OzEgxi3q30F5v4b8Ac1f09Db3eDf4290B0202b24B54bA821"); // Add the actual authorization token here
+
+            const resultContent = resultText.value;
+
+            const raw = JSON.stringify({
+                "model": "deepexi2.5-72b-instruct",
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": `${resultContent}` + '\nTranslate to english, provide the english term only without other words.'
+                    }
+                ],
+                "temperature": 0.7
             });
+
+            const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: raw,
+                redirect: "follow"
+            };
+
+            fetch("https://fastagi.deepexi.com/v1/chat/completions", requestOptions)
+                .then((response) => response.json())
+                .then((result) => {
+                    responseText.value = result.choices[0].message.content;
+                })
+                .catch((error) => console.error(error));
+        });
     </script>
 </body>
 
