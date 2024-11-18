@@ -156,7 +156,7 @@
                         if (content.length > 0) {
                             resultText.value = content.map(item => item.text).join('\n');
                         } else if (retry) {
-                            setTimeout(() => fetchResult(taskIds, false), 10000); // Retry after 10 seconds
+                            setTimeout(() => fetchResult(taskIds, false), 1000); // Retry after 1 seconds
                         }
                     }
                 })
