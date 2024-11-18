@@ -136,11 +136,6 @@
 
         // Adding retry mechanism to fetch result
         function fetchResult(taskIds, retry = true, retries = 0) {
-                if (retries >= 30) {
-                    console.error('Failed to fetch result after 30 attempts.');
-                    return;
-                }
-
                 const myHeaders = new Headers();
                 myHeaders.append("Content-Type", "application/json");
 
@@ -161,14 +156,14 @@
                             if (content.length > 0) {
                                 resultText.value = content.map(item => item.text).join('\n');
                             } else if (retry) {
-                                setTimeout(() => fetchResult(taskIds, false, retries + 1), 1000); // Retry after 1 seconds, increment retries counter
+                                setTimeout(() => fetchResult(taskIds, retries < 30, retries + 1), 1000); // Retry after 1 seconds, increment retries counter
                             }
                         }
                     })
                     .catch((error) => {
                         console.error('Error:', error);
                         if (retry) {
-                            setTimeout(() => fetchResult(taskIds, false, retries + 1), 1000); // Retry after 1 seconds, increment retries counter
+                            setTimeout(() => fetchResult(taskIds, retries < 30, retries + 1), 1000); // Retry after 1 seconds, increment retries counter
                         }
                     });
             }
