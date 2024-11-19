@@ -45,7 +45,7 @@
     <img id="photo" alt="Captured Photo"><br>
     <button id="upload">Upload Photo</button><br>
     <textarea id="resultText" readonly></textarea><br>
-    <button id="send">Send Content</button><br>
+    <button id="send">Send Content(GPT-4o)</button><button id="send2">Send Content(DeepeXi)</button><br>
     <textarea id="responseText" readonly></textarea>
 
     <script>
@@ -56,6 +56,7 @@
         const uploadButton = document.getElementById('upload');
         const resultText = document.getElementById('resultText');
         const sendButton = document.getElementById('send');
+        const sendButton2 = document.getElementById('send2');
         const responseText = document.getElementById('responseText');
         let capturedBlob;
 
@@ -171,6 +172,40 @@
 
         // Send the result text content when the send button is clicked
         sendButton.addEventListener('click', () => {
+            const myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            myHeaders.append("Authorization", "sk-OzEgxi3q30F5v4b8Ac1f09Db3eDf4290B0202b24B54bA821"); // Add the actual authorization token here
+
+            const resultContent = resultText.value;
+
+            const raw = JSON.stringify({
+                "model": "gpt-4o-mini",
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": `${resultContent}` + '\nTranslate to english, provide the english term only without other words.'
+                    }
+                ],
+                "temperature": 0.7
+            });
+
+            const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: raw,
+                redirect: "follow"
+            };
+
+            fetch("https://fastagi.deepexi.com/v1/chat/completions", requestOptions)
+              .then((response) => response.json())
+              .then((result) => {
+                  responseText.value = result.choices[0].message.content;
+              })
+              .catch((error) => console.error(error));
+        });
+
+        
+        sendButton2.addEventListener('click', () => {
             const myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
             myHeaders.append("Authorization", "sk-OzEgxi3q30F5v4b8Ac1f09Db3eDf4290B0202b24B54bA821"); // Add the actual authorization token here
