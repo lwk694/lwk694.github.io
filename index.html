@@ -202,7 +202,7 @@
                 "messages": [
                     {
                         "role": "user",
-                        "content": `You are a expert in language ${selectedMode === "translation" ? "translation" : "summarization"}. Your task is to ${selectedMode === "translation" ? "translate" : "summarize"} the following content to ${selectedLanguage}. ${selectedMode === "translate" ? "Output only the result without any extra information" : `1. Summarize the following report into a few key points.\n2. Write the bullet points in one sentences each\n3. Output only the translated content without any extra information.`}. Content: ${content}`                    }
+                        "content": `You are a expert in language ${selectedMode === "translation" ? "translation" : "summarization"}. Your task is to ${selectedMode === "translation" ? "translate" : "summarize"} the following content to ${selectedLanguage}. ${selectedMode === "translation" ? "Output only the result without any extra information" : `1. Summarize the following report into a few key points.\n2. Write the bullet points in one sentences each\n3. Output only the translated content without any extra information.`}. Content: ${content}`                    }
                 ],
                 "temperature": temperature
             });
