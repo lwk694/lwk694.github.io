@@ -193,7 +193,7 @@
                 "messages": [
                     {
                         "role": "user",
-                        "content": `${resultContent}` + "\nTranslate to " + `${selectedLanguage}` + ", provide the " + `${selectedLanguage}` + "term only without other words."
+                        "content": `you are a expert in language translation. Your task is translate the content into ${selectedLanguage}. Output only the translated content without any extra information. Content:${resultContent}`
                     }
                 ],
                 "temperature": 0.7
