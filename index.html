@@ -56,9 +56,9 @@
     <button id="upload">Upload Photo</button><br>
     <textarea id="resultText" readonly></textarea><br>
     <button id="send">Send and Translate(GPT-4o)</button>
-    <button id="send2">Send and Translate(DeepeXi)</button>
+    <!-- <button id="send2">Send and Translate(DeepeXi)</button> -->
     <button id="send3">Send and Summarize(GPT-4o)</button>
-    <button id="send4">Send and Summarize(DeepeXi)</button>
+    <!-- <button id="send4">Send and Summarize(DeepeXi)</button> -->
     <select id="languageSelect">
         <option value="English">English (default)</option>
         <option value="Traditional Chinese">Traditional Chinese</option>
@@ -245,7 +245,7 @@
 
         sendButton3.addEventListener('click', () => {
             const selectedLanguage = document.getElementById('languageSelect').value;
-            const apiRequestOptions = buildApiRequest(resultText.value, 'deepexi2.5-72b-instruct', `summarization`, selectedLanguage, 0.7);
+            const apiRequestOptions = buildApiRequest(resultText.value, 'gpt-4o-mini', `summarization`, selectedLanguage, 0.7);
 
             fetch("https://fastagi.deepexi.com/v1/chat/completions", apiRequestOptions)
                 .then((response) => response.json())
