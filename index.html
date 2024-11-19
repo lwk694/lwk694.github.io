@@ -78,9 +78,9 @@
         const uploadButton = document.getElementById('upload');
         const resultText = document.getElementById('resultText');
         const sendButton = document.getElementById('send');
-        const sendButton2 = document.getElementById('send2');
+        // const sendButton2 = document.getElementById('send2');
         const sendButton3 = document.getElementById('send3');
-        const sendButton4 = document.getElementById('send4');
+        // const sendButton4 = document.getElementById('send4');
         const responseText = document.getElementById('responseText');
         let capturedBlob;
 
@@ -220,6 +220,7 @@
 
         // Send the result text content when the send button is clicked
         sendButton.addEventListener('click', () => {
+            console.log('test')
             const selectedLanguage = document.getElementById('languageSelect').value;
             const apiRequestOptions = buildApiRequest(resultText.value, 'gpt-4o-mini', `translation`, selectedLanguage, 0.7);
 
@@ -231,19 +232,21 @@
                 .catch((error) => console.error(error));
         });
 
-        sendButton2.addEventListener('click', () => {
-            const selectedLanguage = document.getElementById('languageSelect').value;
-            const apiRequestOptions = buildApiRequest(resultText.value, 'deepexi2.5-72b-instruct', `translation`, selectedLanguage, 0.7);
+        // sendButton2.addEventListener('click', () => {
+        //     console.log('test')
+        //     const selectedLanguage = document.getElementById('languageSelect').value;
+        //     const apiRequestOptions = buildApiRequest(resultText.value, 'deepexi2.5-72b-instruct', `translation`, selectedLanguage, 0.7);
 
-            fetch("https://fastagi.deepexi.com/v1/chat/completions", apiRequestOptions)
-                .then((response) => response.json())
-                .then((result) => {
-                    responseText.value = result.choices[0].message.content;
-                })
-                .catch((error) => console.error(error));
-        });
+        //     fetch("https://fastagi.deepexi.com/v1/chat/completions", apiRequestOptions)
+        //         .then((response) => response.json())
+        //         .then((result) => {
+        //             responseText.value = result.choices[0].message.content;
+        //         })
+        //         .catch((error) => console.error(error));
+        // });
 
         sendButton3.addEventListener('click', () => {
+            console.log('test')
             const selectedLanguage = document.getElementById('languageSelect').value;
             const apiRequestOptions = buildApiRequest(resultText.value, 'gpt-4o-mini', `summarization`, selectedLanguage, 0.7);
 
@@ -255,17 +258,18 @@
                 .catch((error) => console.error(error));
         });
 
-        sendButton4.addEventListener('click', () => {
-            const selectedLanguage = document.getElementById('languageSelect').value;
-            const apiRequestOptions = buildApiRequest(resultText.value, 'deepexi2.5-72b-instruct', `summarization`, selectedLanguage, 0.7);
+        // sendButton4.addEventListener('click', () => {
+        //     console.log('test')
+        //     const selectedLanguage = document.getElementById('languageSelect').value;
+        //     const apiRequestOptions = buildApiRequest(resultText.value, 'deepexi2.5-72b-instruct', `summarization`, selectedLanguage, 0.7);
 
-            fetch("https://fastagi.deepexi.com/v1/chat/completions", apiRequestOptions)
-                .then((response) => response.json())
-                .then((result) => {
-                    responseText.value = result.choices[0].message.content;
-                })
-                .catch((error) => console.error(error));
-        });
+        //     fetch("https://fastagi.deepexi.com/v1/chat/completions", apiRequestOptions)
+        //         .then((response) => response.json())
+        //         .then((result) => {
+        //             responseText.value = result.choices[0].message.content;
+        //         })
+        //         .catch((error) => console.error(error));
+        // });
     </script>
 </body>
 
