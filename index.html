@@ -174,7 +174,7 @@
                 redirect: "follow"
             };
 
-            fetch($secrets.DEEPEXI_CREATE_TASK, requestOptions)
+            fetch($secrets.DEEPEXI_GET_RESULT, requestOptions)
                 .then((response) => response.json())
                 .then((result) => {
                     if (result.code === 200) {
