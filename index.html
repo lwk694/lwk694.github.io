@@ -139,7 +139,7 @@
             const formData = new FormData();
             formData.append('documents', capturedBlob, 'photo.png');
 
-            fetch($DEEPEXI_CREATE_TASK, {
+            fetch($secrets.DEEPEXI_CREATE_TASK, {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -174,7 +174,7 @@
                 redirect: "follow"
             };
 
-            fetch($DEEPEXI_GET_RESULT, requestOptions)
+            fetch($secrets.DEEPEXI_CREATE_TASK, requestOptions)
                 .then((response) => response.json())
                 .then((result) => {
                     if (result.code === 200) {
@@ -232,20 +232,6 @@
                 })
                 .catch((error) => console.error(error));
         });
-
-        // sendButton2.addEventListener('click', () => {
-        //     console.log('test')
-        //     const selectedLanguage = document.getElementById('languageSelect').value;
-        //     const apiRequestOptions = buildApiRequest(resultText.value, 'deepexi2.5-72b-instruct', `translation`, selectedLanguage, 0.7);
-
-        //     fetch("https://fastagi.deepexi.com/v1/chat/completions", apiRequestOptions)
-        //         .then((response) => response.json())
-        //         .then((result) => {
-        //             responseText.value = result.choices[0].message.content;
-        //         })
-        //         .catch((error) => console.error(error));
-        // });
-
         sendButton3.addEventListener('click', () => {
             console.log('test')
             const selectedLanguage = document.getElementById('languageSelect').value;
@@ -258,19 +244,6 @@
                 })
                 .catch((error) => console.error(error));
         });
-
-        // sendButton4.addEventListener('click', () => {
-        //     console.log('test')
-        //     const selectedLanguage = document.getElementById('languageSelect').value;
-        //     const apiRequestOptions = buildApiRequest(resultText.value, 'deepexi2.5-72b-instruct', `summarization`, selectedLanguage, 0.7);
-
-        //     fetch("https://fastagi.deepexi.com/v1/chat/completions", apiRequestOptions)
-        //         .then((response) => response.json())
-        //         .then((result) => {
-        //             responseText.value = result.choices[0].message.content;
-        //         })
-        //         .catch((error) => console.error(error));
-        // });
     </script>
 </body>
 
