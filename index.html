@@ -139,7 +139,7 @@
             const formData = new FormData();
             formData.append('documents', capturedBlob, 'photo.png');
 
-            fetch('https://deepexi-docai.deepexi.com/api/contracts/v3/parser/external/task/create?parse_type=1&merge_images=1', {
+            fetch($DEEPEXI_CREATE_TASK, {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -174,7 +174,7 @@
                 redirect: "follow"
             };
 
-            fetch("https://deepexi-docai.deepexi.com/api/contracts/v3/parser/external/result", requestOptions)
+            fetch($DEEPEXI_GET_RESULT, requestOptions)
                 .then((response) => response.json())
                 .then((result) => {
                     if (result.code === 200) {
