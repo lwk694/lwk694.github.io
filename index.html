@@ -225,7 +225,7 @@
             const selectedLanguage = document.getElementById('languageSelect').value;
             const apiRequestOptions = buildApiRequest(resultText.value, 'gpt-4o-mini', `translation`, selectedLanguage, 0.7);
 
-            fetch($secrets.DEEPEXI_GET_RESULT, apiRequestOptions)
+            fetch($secrets.DEEPEXI_LLM, apiRequestOptions)
                 .then((response) => response.json())
                 .then((result) => {
                     responseText.value = result.choices[0].message.content;
@@ -237,7 +237,7 @@
             const selectedLanguage = document.getElementById('languageSelect').value;
             const apiRequestOptions = buildApiRequest(resultText.value, 'gpt-4o-mini', `summarization`, selectedLanguage, 0.7);
 
-            fetch($secrets.DEEPEXI_GET_RESULT, apiRequestOptions)
+            fetch($secrets.DEEPEXI_LLM, apiRequestOptions)
                 .then((response) => response.json())
                 .then((result) => {
                     responseText.value = result.choices[0].message.content;
