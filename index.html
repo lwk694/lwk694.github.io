@@ -197,7 +197,7 @@
         function buildApiRequest(content, modelName, selectedMode, selectedLanguage, temperature) {
             const myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
-            myHeaders.append("Authorization", ${{ secrets.AUTH_KEY }}); // Add the actual authorization token here
+            myHeaders.append("Authorization", $secrets.AUTH_KEY); // Add the actual authorization token here
 
             const raw = JSON.stringify({
                 "model": modelName,
