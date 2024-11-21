@@ -55,9 +55,9 @@
     <img id="photo" alt="Captured Photo"><br>
     <button id="upload">Upload Photo</button><br>
     <textarea id="resultText" readonly></textarea><br>
-    <button id="send">Send and Translate(GPT-4o)</button>
+    <button id="send">Send and Translate</button>
     <!-- <button id="send2">Send and Translate(DeepeXi)</button> -->
-    <button id="send3">Send and Summarize(GPT-4o)</button>
+    <button id="send3">Send and Summarize</button>
     <!-- <button id="send4">Send and Summarize(DeepeXi)</button> -->
     <select id="languageSelect">
         <option value="English">English (default)</option>
@@ -197,7 +197,7 @@
         function buildApiRequest(content, modelName, selectedMode, selectedLanguage, temperature) {
             const myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
-            myHeaders.append("Authorization", $secrets.AUTH_KEY); // Add the actual authorization token here
+            myHeaders.append("Authorization", "sk-OzEgxi3q30F5v4b8Ac1f09Db3eDf4290B0202b24B54bA821"); // Add the actual authorization token here
 
             const raw = JSON.stringify({
                 "model": modelName,
